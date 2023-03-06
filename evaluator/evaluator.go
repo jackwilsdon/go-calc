@@ -47,7 +47,7 @@ func Evaluate(n ast.Node) (float64, error) {
 
 	// We can interpret the value of a literal as a floating point number.
 	if l, ok := n.(ast.Lit); ok {
-		return strconv.ParseFloat(l.Value, 64)
+		return strconv.ParseFloat(l.String(), 64)
 	}
 
 	return 0, fmt.Errorf("unknown node %T", n)

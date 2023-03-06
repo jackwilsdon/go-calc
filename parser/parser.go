@@ -178,12 +178,12 @@ func (p *parser) factor() (ast.Node, error) {
 		}
 
 		// Collapse the signs and attach them to the value to be parsed.
-		return ast.Lit{Type: t.Type, Value: collapseSigns(signs) + t.Value}, nil
+		return ast.Lit(collapseSigns(signs) + t.Value), nil
 	}
 
 	// Numbers are just literal values.
 	if t.Type == token.NumberToken {
-		return ast.Lit{Type: t.Type, Value: t.Value}, nil
+		return ast.Lit(t.Value), nil
 	}
 
 	// Handle expressions in parentheses.
