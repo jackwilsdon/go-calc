@@ -162,12 +162,13 @@ func (s *Scanner) Scan() (Token, error) {
 	}
 
 	// We don't know what type it is, just move along one rune anyway.
-	if _, err := s.read(); err != nil {
+	v, err := s.read()
+	if err != nil {
 		return handleError(s.position, err)
 	}
 
 	// This is an unknown type.
-	return Token{Type: UnknownToken}, nil
+	return Token{UnknownToken, string(v), startPosition}, nil
 }
 
 // ScanAll reads and returns all tokens until io.EOF is returned by the
