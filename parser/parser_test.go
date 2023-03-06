@@ -3,6 +3,7 @@ package parser_test
 import (
 	"github.com/jackwilsdon/go-calc/ast"
 	"github.com/jackwilsdon/go-calc/parser"
+	"github.com/jackwilsdon/go-calc/token"
 	"reflect"
 	"strconv"
 	"testing"
@@ -15,19 +16,19 @@ func TestParser(t *testing.T) {
 	}{
 		{
 			"1",
-			ast.Lit("1"),
+			ast.Lit{Type: token.NumberToken, Value: "1"},
 		},
 		{
 			"1.0",
-			ast.Lit("1.0"),
+			ast.Lit{Type: token.NumberToken, Value: "1.0"},
 		},
 		{
 			"0 + 2 / .3",
 			ast.BinaryExpr{
-				Left: ast.Lit("0"),
+				Left: ast.Lit{Type: token.NumberToken, Value: "0"},
 				Right: ast.BinaryExpr{
-					Left:  ast.Lit("2"),
-					Right: ast.Lit(".3"),
+					Left:  ast.Lit{Type: token.NumberToken, Value: "2"},
+					Right: ast.Lit{Type: token.NumberToken, Value: ".3"},
 					Op:    "/",
 				},
 				Op: "+",
@@ -37,13 +38,13 @@ func TestParser(t *testing.T) {
 			"(1 * 2) + (3 - 4)",
 			ast.BinaryExpr{
 				Left: ast.BinaryExpr{
-					Left:  ast.Lit("1"),
-					Right: ast.Lit("2"),
+					Left:  ast.Lit{Type: token.NumberToken, Value: "1"},
+					Right: ast.Lit{Type: token.NumberToken, Value: "2"},
 					Op:    "*",
 				},
 				Right: ast.BinaryExpr{
-					Left:  ast.Lit("3"),
-					Right: ast.Lit("4"),
+					Left:  ast.Lit{Type: token.NumberToken, Value: "3"},
+					Right: ast.Lit{Type: token.NumberToken, Value: "4"},
 					Op:    "-",
 				},
 				Op: "+",
@@ -52,22 +53,22 @@ func TestParser(t *testing.T) {
 		{
 			"3 + 4 * 2 / (1 - 5) ^ 2 ^ 3",
 			ast.BinaryExpr{
-				Left: ast.Lit("3"),
+				Left: ast.Lit{Type: token.NumberToken, Value: "3"},
 				Right: ast.BinaryExpr{
 					Left: ast.BinaryExpr{
-						Left:  ast.Lit("4"),
-						Right: ast.Lit("2"),
+						Left:  ast.Lit{Type: token.NumberToken, Value: "4"},
+						Right: ast.Lit{Type: token.NumberToken, Value: "2"},
 						Op:    "*",
 					},
 					Right: ast.BinaryExpr{
 						Left: ast.BinaryExpr{
-							Left:  ast.Lit("1"),
-							Right: ast.Lit("5"),
+							Left:  ast.Lit{Type: token.NumberToken, Value: "1"},
+							Right: ast.Lit{Type: token.NumberToken, Value: "5"},
 							Op:    "-",
 						},
 						Right: ast.BinaryExpr{
-							Left:  ast.Lit("2"),
-							Right: ast.Lit("3"),
+							Left:  ast.Lit{Type: token.NumberToken, Value: "2"},
+							Right: ast.Lit{Type: token.NumberToken, Value: "3"},
 							Op:    "^",
 						},
 						Op: "^",
@@ -75,6 +76,42 @@ func TestParser(t *testing.T) {
 					Op: "/",
 				},
 				Op: "+",
+			},
+		},
+		{
+			"2 * π",
+			ast.BinaryExpr{
+				Left:  ast.Lit{Type: token.NumberToken, Value: "2"},
+				Right: ast.Lit{Type: token.ConstantToken, Value: "π"},
+				Op:    "*",
+			},
+		},
+		{
+			"3.141 / Pi + 2",
+			ast.BinaryExpr{
+				Left: ast.BinaryExpr{
+					Left:  ast.Lit{Type: token.NumberToken, Value: "3.141"},
+					Right: ast.Lit{Type: token.ConstantToken, Value: "Pi"},
+					Op:    "/",
+				},
+				Right: ast.Lit{Type: token.NumberToken, Value: "2"},
+				Op:    "+",
+			},
+		},
+		{
+			"-Pi + -Pi + Pi + Pi",
+			ast.BinaryExpr{
+				Left: ast.BinaryExpr{
+					Left: ast.BinaryExpr{
+						Left:  ast.Lit{Type: token.ConstantToken, Value: "-Pi"},
+						Right: ast.Lit{Type: token.ConstantToken, Value: "-Pi"},
+						Op:    "+",
+					},
+					Right: ast.Lit{Type: token.ConstantToken, Value: "Pi"},
+					Op:    "+",
+				},
+				Right: ast.Lit{Type: token.ConstantToken, Value: "Pi"},
+				Op:    "+",
 			},
 		},
 	}

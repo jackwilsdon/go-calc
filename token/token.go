@@ -7,6 +7,7 @@ const (
 	ParenthesisToken
 	NumberToken
 	OperatorToken
+	ConstantToken
 )
 
 func (t Type) String() string {
@@ -17,6 +18,8 @@ func (t Type) String() string {
 		return "Number"
 	case OperatorToken:
 		return "Operator"
+	case ConstantToken:
+		return "Constant"
 	default:
 		return "Unknown"
 	}

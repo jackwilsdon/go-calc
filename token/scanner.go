@@ -22,6 +22,10 @@ func isParenthesis(r rune) bool {
 	return r == '(' || r == ')'
 }
 
+func isConstant(r rune) bool {
+	return !isWhitespace(r) && !isDigit(r) && !isOperator(r) && !isParenthesis(r)
+}
+
 // Scanner converts a stream of runes into a stream of tokens.
 type Scanner struct {
 	r        *bufio.Reader
@@ -153,14 +157,14 @@ func (s *Scanner) Scan() (Token, error) {
 		return Token{ParenthesisToken, string(paren), startPosition}, nil
 	}
 
-	// We don't know what type it is, just move along one rune anyway.
-	v, err := s.read()
+	// The only thing this can now be is a constant.
+	constant, err := s.scanWhile(isConstant)
+
 	if err != nil {
 		return Token{}, err
 	}
 
-	// This is an unknown type.
-	return Token{UnknownToken, string(v), startPosition}, nil
+	return Token{ConstantToken, constant, startPosition}, nil
 }
 
 // ScanAll reads and returns all tokens until io.EOF is returned by the

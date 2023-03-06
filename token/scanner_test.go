@@ -70,6 +70,38 @@ func TestScannerScanAll(t *testing.T) {
 				{token.NumberToken, "3", 26},
 			},
 		},
+		{
+			"2 * π",
+			[]token.Token{
+				{token.NumberToken, "2", 0},
+				{token.OperatorToken, "*", 2},
+				{token.ConstantToken, "π", 4},
+			},
+		},
+		{
+			"3.141 / Pi + 2",
+			[]token.Token{
+				{token.NumberToken, "3.141", 0},
+				{token.OperatorToken, "/", 6},
+				{token.ConstantToken, "Pi", 8},
+				{token.OperatorToken, "+", 11},
+				{token.NumberToken, "2", 13},
+			},
+		},
+		{
+			"-Pi + -Pi + Pi + Pi",
+			[]token.Token{
+				{token.OperatorToken, "-", 0},
+				{token.ConstantToken, "Pi", 1},
+				{token.OperatorToken, "+", 4},
+				{token.OperatorToken, "-", 6},
+				{token.ConstantToken, "Pi", 7},
+				{token.OperatorToken, "+", 10},
+				{token.ConstantToken, "Pi", 12},
+				{token.OperatorToken, "+", 15},
+				{token.ConstantToken, "Pi", 17},
+			},
+		},
 	}
 
 	for i, c := range cases {

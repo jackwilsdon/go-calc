@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"github.com/jackwilsdon/go-calc/evaluator"
 	"github.com/jackwilsdon/go-calc/parser"
+	"math"
 	"os"
 	"strconv"
 	"strings"
 )
+
+var constants = map[string]float64{
+	"Inf": math.Inf(1),
+	"Pi":  math.Pi,
+	"π":   math.Pi,
+}
 
 func main() {
 	args := os.Args[1:]
@@ -27,7 +34,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	result, err := evaluator.Evaluate(node)
+	result, err := evaluator.Evaluate(node, constants)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "failed to interpret: %s\n", err)
 		os.Exit(1)

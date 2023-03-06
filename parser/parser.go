@@ -172,18 +172,18 @@ func (p *parser) factor() (ast.Node, error) {
 			signs += t.Value
 		}
 
-		// We require a number to attach the signs to.
-		if t.Type != token.NumberToken {
-			return nil, fmt.Errorf("unexpected %s, expected a number at %d", t, t.Position)
+		// We require a number or constant to attach the signs to.
+		if t.Type != token.NumberToken && t.Type != token.ConstantToken {
+			return nil, fmt.Errorf("unexpected %s, expected a number or constant at %d", t, t.Position)
 		}
 
 		// Collapse the signs and attach them to the value to be parsed.
-		return ast.Lit(collapseSigns(signs) + t.Value), nil
+		return ast.Lit{Type: t.Type, Value: collapseSigns(signs) + t.Value}, nil
 	}
 
-	// Numbers are just literal values.
-	if t.Type == token.NumberToken {
-		return ast.Lit(t.Value), nil
+	// Numbers and constants are just literal values.
+	if t.Type == token.NumberToken || t.Type == token.ConstantToken {
+		return ast.Lit{Type: t.Type, Value: t.Value}, nil
 	}
 
 	// Handle expressions in parentheses.
