@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jackwilsdon/go-calc/ast"
 	"github.com/jackwilsdon/go-calc/token"
@@ -147,6 +148,9 @@ func (p *parser) expression(minimumPrecedence int) (ast.Node, error) {
 
 func (p *parser) factor() (ast.Node, error) {
 	t, err := p.next()
+	if err == io.EOF {
+		return nil, errors.New("unexpected EOF, expected a factor")
+	}
 
 	if err != nil {
 		return nil, err
@@ -159,8 +163,9 @@ func (p *parser) factor() (ast.Node, error) {
 		// Keep consuming operators and adding them onto the sign string.
 		for t.Type == token.OperatorToken && (t.Value == "+" || t.Value == "-") {
 			t, err = p.next()
-
-			if err != nil {
+			if err == io.EOF {
+				return nil, errors.New("unexpected EOF, expected a number")
+			} else if err != nil {
 				return nil, err
 			}
 
@@ -192,7 +197,9 @@ func (p *parser) factor() (ast.Node, error) {
 
 		t, err = p.next()
 
-		if err != nil {
+		if err == io.EOF {
+			return nil, errors.New("unexpected EOF, expected closing parenthesis")
+		} else if err != nil {
 			return nil, err
 		}
 
