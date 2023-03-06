@@ -216,7 +216,23 @@ func (p *parser) factor() (ast.Node, error) {
 }
 
 func ParseScanner(s *token.Scanner) (ast.Node, error) {
-	return (&parser{scanner: s}).expression(1)
+	p := parser{scanner: s}
+
+	node, err := p.expression(1)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := p.peek()
+	if err == io.EOF {
+		// No trailing tokens.
+		return node, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	// There are more tokens after the expression.
+	return nil, fmt.Errorf("unexpected trailing %s at %d", t, t.Position)
 }
 
 func ParseReader(r io.Reader) (ast.Node, error) {
