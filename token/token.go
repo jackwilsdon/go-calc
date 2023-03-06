@@ -7,7 +7,6 @@ const (
 	ParenthesisToken
 	NumberToken
 	OperatorToken
-	EOFToken
 )
 
 func (t Type) String() string {
@@ -18,8 +17,6 @@ func (t Type) String() string {
 		return "Number"
 	case OperatorToken:
 		return "Operator"
-	case EOFToken:
-		return "EOF"
 	default:
 		return "Unknown"
 	}
@@ -32,9 +29,5 @@ type Token struct {
 }
 
 func (t Token) String() string {
-	if t.Type == EOFToken {
-		return "EOF"
-	}
-
 	return "\"" + t.Value + "\""
 }

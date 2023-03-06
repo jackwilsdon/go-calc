@@ -91,7 +91,10 @@ func (p *parser) expression(minimumPrecedence int) (ast.Node, error) {
 	for {
 		t, err := p.peek()
 
-		if err != nil {
+		if err == io.EOF {
+			// End of expression.
+			break
+		} else if err != nil {
 			return nil, err
 		}
 

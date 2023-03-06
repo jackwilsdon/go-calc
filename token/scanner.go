@@ -22,14 +22,6 @@ func isParenthesis(r rune) bool {
 	return r == '(' || r == ')'
 }
 
-func handleError(position int, err error) (Token, error) {
-	if err == io.EOF {
-		return Token{Type: EOFToken, Position: position}, nil
-	}
-
-	return Token{}, err
-}
-
 // Scanner converts a stream of runes into a stream of tokens.
 type Scanner struct {
 	r        *bufio.Reader
@@ -113,7 +105,7 @@ func (s *Scanner) Scan() (Token, error) {
 
 	// Eat up all the whitespace as we don't really care about it.
 	if _, err := s.scanWhile(isWhitespace); err != nil {
-		return handleError(s.position, err)
+		return Token{}, err
 	}
 
 	// Update the start position before we scan for digits.
@@ -123,7 +115,7 @@ func (s *Scanner) Scan() (Token, error) {
 	digit, err := s.scanWhile(isDigit)
 
 	if err != nil {
-		return handleError(s.position, err)
+		return Token{}, err
 	}
 
 	// If there's any digits then it's a number.
@@ -138,7 +130,7 @@ func (s *Scanner) Scan() (Token, error) {
 	op, isOp, err := s.scan(isOperator)
 
 	if err != nil {
-		return handleError(s.position, err)
+		return Token{}, err
 	}
 
 	// If it did match then it's an operator.
@@ -153,7 +145,7 @@ func (s *Scanner) Scan() (Token, error) {
 	paren, isParen, err := s.scan(isParenthesis)
 
 	if err != nil {
-		return handleError(s.position, err)
+		return Token{}, err
 	}
 
 	// If it did match then it's a parenthesis.
@@ -164,7 +156,7 @@ func (s *Scanner) Scan() (Token, error) {
 	// We don't know what type it is, just move along one rune anyway.
 	v, err := s.read()
 	if err != nil {
-		return handleError(s.position, err)
+		return Token{}, err
 	}
 
 	// This is an unknown type.
@@ -179,13 +171,11 @@ func (s *Scanner) ScanAll() ([]Token, error) {
 	for {
 		t, err := s.Scan()
 
-		if err != nil {
-			return nil, err
-		}
-
-		// If it's an EOF then don't add it to the array and just return it.
-		if t.Type == EOFToken {
+		if err == io.EOF {
+			// If it's an EOF then don't add it to the array and just return it.
 			return ts, nil
+		} else if err != nil {
+			return nil, err
 		}
 
 		// Add the token to the array.
