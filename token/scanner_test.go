@@ -25,6 +25,19 @@ func TestScannerScanAll(t *testing.T) {
 			},
 		},
 		{
+			"-5 + -3 + +5",
+			[]token.Token{
+				{token.OperatorToken, "-", 0},
+				{token.NumberToken, "5", 1},
+				{token.OperatorToken, "+", 3},
+				{token.OperatorToken, "-", 5},
+				{token.NumberToken, "3", 6},
+				{token.OperatorToken, "+", 8},
+				{token.OperatorToken, "+", 10},
+				{token.NumberToken, "5", 11},
+			},
+		},
+		{
 			"0 + 2 / .3",
 			[]token.Token{
 				{token.NumberToken, "0", 0},

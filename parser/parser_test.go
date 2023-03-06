@@ -23,6 +23,18 @@ func TestParser(t *testing.T) {
 			ast.Lit{Type: token.NumberToken, Value: "1.0"},
 		},
 		{
+			"-5 + -3 + +5",
+			ast.BinaryExpr{
+				Left: ast.BinaryExpr{
+					Left:  ast.Lit{Type: token.NumberToken, Value: "-5"},
+					Right: ast.Lit{Type: token.NumberToken, Value: "-3"},
+					Op:    "+",
+				},
+				Right: ast.Lit{Type: token.NumberToken, Value: "+5"},
+				Op:    "+",
+			},
+		},
+		{
 			"0 + 2 / .3",
 			ast.BinaryExpr{
 				Left: ast.Lit{Type: token.NumberToken, Value: "0"},
